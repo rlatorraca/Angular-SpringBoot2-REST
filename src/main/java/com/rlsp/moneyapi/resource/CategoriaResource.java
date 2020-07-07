@@ -2,9 +2,9 @@ package com.rlsp.moneyapi.resource;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +60,8 @@ public class CategoriaResource {
 	 * @ResponseStatus(value = HttpStatus.CREATED) ==> apos criado retornara com um 201 (created)
 	 * 
 	 * - O REST pede um location no retorno, mostrando como deve ser recuperado o recurso no futuro
+	 * 
+	 *  @Valid ==> valida os campos usando jakarta.validation 
 	 */
 	
 	/**
@@ -86,7 +88,7 @@ public class CategoriaResource {
 	
 	// @ResponseStatus(value = HttpStatus.CREATED) == ResponseEntity.created(uri).body(categoriaSalva);
 	@PostMapping
-	public ResponseEntity<Categoria> salvar(@RequestBody Categoria categoria, HttpServletResponse response) {
+	public ResponseEntity<Categoria> salvar(@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
 		
 		Categoria categoriaSalva = categoriaRepository.save(categoria);
 		
