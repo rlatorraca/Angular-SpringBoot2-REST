@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 /**
@@ -79,6 +82,25 @@ public class RlspMoneyExceptionHandler extends ResponseEntityExceptionHandler{
 		}
 		return listaErros;
 	
+	}
+	
+	/**
+	 * Trata o ERRO ao DELETAR alguma informacao (codigo) que nao existe no DB
+	 * @author rlatorraca
+	 * - @ExceptionHandler ==> mostra qual o tipo de Excecao que ira tratar.
+	 *  --> EmptyResultDataAccessException ==> nao retorna pelo menos 1 valor do DB
+	 *
+	 */
+	@ExceptionHandler({EmptyResultDataAccessException.class})
+	@ResponseStatus(HttpStatus.NOT_FOUND) // retorna 404 
+	private ResponseEntity<Object> handleEmptyResultaDataAccessException(EmptyResultDataAccessException ex, WebRequest request) {
+	
+		//Resposta ao USUARIO e DESENVOLVEDOR
+		String mensagemUsuario = messageSource.getMessage("recurso.nao.achado", null, LocaleContextHolder.getLocale()); 
+		String mensagemDesenvolvedor = ex.toString(); // Nao tem o .getCause() , pois a Excecao eh postada direto
+		List<MensagemErro> listaErros = Arrays.asList(new MensagemErro(mensagemUsuario, mensagemDesenvolvedor));
+		
+		return handleExceptionInternal(ex, listaErros, new HttpHeaders(), HttpStatus.NOT_FOUND, request); // Passando um BODY (Mensagem) que se queria
 	}
 	
 	public static class MensagemErro {

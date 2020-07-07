@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.rlsp.moneyapi.event.RecursoCriadoEvent;
 import com.rlsp.moneyapi.model.Categoria;
 import com.rlsp.moneyapi.repository.CategoriaRepository;
 
@@ -37,6 +40,12 @@ public class CategoriaResource {
 	 */
 	@Autowired // ==> diz ao SPRING : procure um implementacao de "categoriaRepository e injete aqui
 	private CategoriaRepository categoriaRepository;
+	
+	/**
+	 * Injeta o Evento de Aplicacao (listener) para entao enviar para "RecursoCriadoEvent" e CRIAR a URI para LOCATION
+	 */
+	@Autowired
+	private ApplicationEventPublisher publisher;
 	
 	
 	/*
@@ -92,17 +101,15 @@ public class CategoriaResource {
 		
 		Categoria categoriaSalva = categoriaRepository.save(categoria);
 		
-		// Construindo a LOCATION		
-		URI uri = ServletUriComponentsBuilder
-						.fromCurrentRequestUri()    // pega a URI atual
-						.path("/{codigo}")
-						.buildAndExpand(categoriaSalva.getCodigo()) // Pega o codigo
-						.toUri();
-		
-		response.setHeader("Location", uri.toASCIIString()); // resposta cm a Location
-		
+		// Construindo a LOCATION, chamando o "RecursoCriadoEvent"
+		// this ==> sera funcao/metodo que chamou o EVENTO
+		publisher.publishEvent(new RecursoCriadoEvent(this, response, categoriaSalva.getCodigo()));
+	
+	
 		// Devolvendo a categoria criada ou salva
-		return ResponseEntity.created(uri).body(categoriaSalva);
+		//return ResponseEntity.created(uri).body(categoriaSalva);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(categoriaSalva);
 	}
 	
 	@GetMapping("/{codigo}")
