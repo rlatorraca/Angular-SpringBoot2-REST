@@ -18,9 +18,10 @@ public class RecursoCriadoEvent extends ApplicationEvent {
 	private Long codigo;
 
 	//Chama o construtor do PAI (ApplicationEvent) passado o response e o codigo
-	public RecursoCriadoEvent(Object source, HttpServletResponse response, Long Codigo) {
+	public RecursoCriadoEvent(Object source, HttpServletResponse response, Long codigo) {
 		super(source);
-		// TODO Auto-generated constructor stub
+		this.response = response;
+		this.codigo = codigo;
 	}
 
 	public static long getSerialversionuid() {

@@ -5,9 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -47,7 +49,7 @@ public class RlspMoneyExceptionHandler extends ResponseEntityExceptionHandler{
 		 * LocaleContextHolder.getLocale() ==> pega o locale corrente (internacionalizacao) do message.properties
 		 */
 		String mensagemUsuario = messageSource.getMessage("mensagem.invalida", null, LocaleContextHolder.getLocale()); 
-		//String mensagemDesenvolvedor = ex.getCause().toString();
+		//String mensagemDesenvolvedor = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
 		String mensagemDesenvolvedor = Optional.ofNullable(ex.getCause()).orElse(ex).toString();
 		List<MensagemErro> listaErros = Arrays.asList(new MensagemErro(mensagemUsuario, mensagemDesenvolvedor));
 		
@@ -95,7 +97,7 @@ public class RlspMoneyExceptionHandler extends ResponseEntityExceptionHandler{
 	 */
 	@ExceptionHandler({EmptyResultDataAccessException.class})
 	@ResponseStatus(HttpStatus.NOT_FOUND) // retorna 404 
-	private ResponseEntity<Object> handleEmptyResultaDataAccessException(EmptyResultDataAccessException ex, WebRequest request) {
+	public ResponseEntity<Object> handleEmptyResultaDataAccessException(EmptyResultDataAccessException ex, WebRequest request) {
 	
 		//Resposta ao USUARIO e DESENVOLVEDOR
 		String mensagemUsuario = messageSource.getMessage("recurso.nao.achado", null, LocaleContextHolder.getLocale()); 
@@ -104,6 +106,22 @@ public class RlspMoneyExceptionHandler extends ResponseEntityExceptionHandler{
 		List<MensagemErro> listaErros = Arrays.asList(new MensagemErro(mensagemUsuario, mensagemDesenvolvedor));
 		
 		return handleExceptionInternal(ex, listaErros, new HttpHeaders(), HttpStatus.NOT_FOUND, request); // Passando um BODY (Mensagem) que se queria
+	}
+	
+	@ExceptionHandler({DataIntegrityViolationException.class})
+	@ResponseStatus(HttpStatus.BAD_REQUEST) // retorna 400
+	public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request){
+		
+		String mensagemUsuario = messageSource.getMessage("recurso.operacao.nao.permitida", null, LocaleContextHolder.getLocale()); 
+		//String mensagemDesenvolvedor = Optional.ofNullable(ex.getCause()).orElse(ex).toString();
+		
+		/**
+		 * Usa o Apache Commons-lang3 para pegar a causa do ERRO
+		 */
+		String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
+		List<MensagemErro> listaErros = Arrays.asList(new MensagemErro(mensagemUsuario, mensagemDesenvolvedor));
+		
+		return handleExceptionInternal(ex, listaErros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request); // Passando um BODY (Mensagem) que se queria
 	}
 	
 	public static class MensagemErro {

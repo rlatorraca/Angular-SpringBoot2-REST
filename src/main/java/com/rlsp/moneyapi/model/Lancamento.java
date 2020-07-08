@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+
 @Entity
 @Table(name="lancamento")
 public class Lancamento {
@@ -27,11 +28,11 @@ public class Lancamento {
 	private String descricao;
 	
 	@Column(name="data_vencimento")
-	@JsonFormat(pattern="dd/MM/yyyy")
+	@JsonFormat(pattern="yyyy-MM-dd")
 	private LocalDate dataVencimento;
 	
 	@Column(name="data_pagamento")
-	@JsonFormat(pattern="dd/MM/yyyy")
+	@JsonFormat(pattern="yyyy-MM-dd")
 	private LocalDate dataPagamento;
 	
 	private BigDecimal valor;

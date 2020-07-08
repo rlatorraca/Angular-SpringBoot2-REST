@@ -56,6 +56,30 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<!-- JSON / JACKSON 
+		<dependency> 
+			<groupId>com.fasterxml.jackson.module</groupId> 
+			<artifactId>jackson-module-parameter-names</artifactId> 
+		</dependency> 
+		<dependency> 
+			<groupId>com.fasterxml.jackson.datatype</groupId> 
+			<artifactId>jackson-datatype-jdk8</artifactId> 
+		</dependency> 
+		<dependency> 
+			<groupId>com.fasterxml.jackson.datatype</groupId> 
+			<artifactId>jackson-datatype-jsr310</artifactId> 
+			</dependency>
+		<dependency> 
+			<groupId>com.fasterxml.jackson.core</groupId> <artifactId>jackson-databind</artifactId> 
+			</dependency> -->
+		<!-- Hibernate JAVA 8 Support <dependency> <groupId>org.hibernate</groupId> 
+			<artifactId>hibernate-java8</artifactId> <scope>compile</scope> </dependency> -->
+
+		<!-- Apache Commons Lang - Para pegar os ERROS / EXCECOES -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>		
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

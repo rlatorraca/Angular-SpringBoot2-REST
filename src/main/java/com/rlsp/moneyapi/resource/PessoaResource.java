@@ -64,15 +64,14 @@ public class PessoaResource {
 	}
 	
 	@GetMapping("/{codigo}")
-	public ResponseEntity<Pessoa> buscarPeloCodigo(@PathVariable Long codigo){{
+	public ResponseEntity<Pessoa> buscarPessoaPeloCodigo(@PathVariable Long codigo){{
 		
 	}
 		
 		// Utilizando MAP
 		return this.pessoaRepository.findById(codigo)
 					   .map(categoria -> ResponseEntity.ok(categoria))
-					   .orElse(ResponseEntity.notFound()
-					   .build());
+					   .orElse(ResponseEntity.notFound().build());
 				
 		//Utilizando isPresent()
 		/* Optional<Pessoa> pessoa = this.pessoaRepository.findById(codigo);
