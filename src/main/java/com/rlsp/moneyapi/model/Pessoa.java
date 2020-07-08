@@ -23,7 +23,7 @@ public class Pessoa {
 	private Endereco endereco;
 	
 	@NotNull
-	private String ativo;
+	private Boolean ativo;
 
 	public Long getCodigo() {
 		return codigo;
@@ -49,11 +49,12 @@ public class Pessoa {
 		this.endereco = endereco;
 	}
 
-	public String getAtivo() {
+	
+	public Boolean getAtivo() {
 		return ativo;
 	}
 
-	public void setAtivo(String ativo) {
+	public void setAtivo(Boolean ativo) {
 		this.ativo = ativo;
 	}
 

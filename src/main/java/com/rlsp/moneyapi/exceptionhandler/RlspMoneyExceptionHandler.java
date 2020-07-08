@@ -3,6 +3,7 @@ package com.rlsp.moneyapi.exceptionhandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -46,7 +47,8 @@ public class RlspMoneyExceptionHandler extends ResponseEntityExceptionHandler{
 		 * LocaleContextHolder.getLocale() ==> pega o locale corrente (internacionalizacao) do message.properties
 		 */
 		String mensagemUsuario = messageSource.getMessage("mensagem.invalida", null, LocaleContextHolder.getLocale()); 
-		String mensagemDesenvolvedor = ex.getCause().toString(); 
+		//String mensagemDesenvolvedor = ex.getCause().toString();
+		String mensagemDesenvolvedor = Optional.ofNullable(ex.getCause()).orElse(ex).toString();
 		List<MensagemErro> listaErros = Arrays.asList(new MensagemErro(mensagemUsuario, mensagemDesenvolvedor));
 		
 		return handleExceptionInternal(ex, listaErros, headers, HttpStatus.BAD_REQUEST, request); // Passando um BODY (Mensagem) que se queria
@@ -97,7 +99,8 @@ public class RlspMoneyExceptionHandler extends ResponseEntityExceptionHandler{
 	
 		//Resposta ao USUARIO e DESENVOLVEDOR
 		String mensagemUsuario = messageSource.getMessage("recurso.nao.achado", null, LocaleContextHolder.getLocale()); 
-		String mensagemDesenvolvedor = ex.toString(); // Nao tem o .getCause() , pois a Excecao eh postada direto
+		//String mensagemDesenvolvedor = ex.toString(); // Nao tem o .getCause() , pois a Excecao eh postada direto
+		String mensagemDesenvolvedor = Optional.ofNullable(ex.getCause()).orElse(ex).toString();
 		List<MensagemErro> listaErros = Arrays.asList(new MensagemErro(mensagemUsuario, mensagemDesenvolvedor));
 		
 		return handleExceptionInternal(ex, listaErros, new HttpHeaders(), HttpStatus.NOT_FOUND, request); // Passando um BODY (Mensagem) que se queria
