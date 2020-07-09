@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import com.rlsp.moneyapi.service.exception.PessoaInexistenteOuInativaException;
 /**
  * Captura EXCEÇÔES de uma RESPOSTA ERRADA de alguma Entidade
  * @author rlatorraca
@@ -122,6 +124,21 @@ public class RlspMoneyExceptionHandler extends ResponseEntityExceptionHandler{
 		List<MensagemErro> listaErros = Arrays.asList(new MensagemErro(mensagemUsuario, mensagemDesenvolvedor));
 		
 		return handleExceptionInternal(ex, listaErros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request); // Passando um BODY (Mensagem) que se queria
+	}
+	
+	/**
+	 * Trata a EXCECAO (ERRO) quando for lancada PESSOA INEXISTENTE ou NAO ATIVA
+	 */
+	@ExceptionHandler({PessoaInexistenteOuInativaException.class})
+	public ResponseEntity<Object> handlePessoInexistenteOuPessoaInativa(PessoaInexistenteOuInativaException ex){
+		
+		//Resposta ao USUARIO e DESENVOLVEDOR
+		String mensagemUsuario = messageSource.getMessage("pessoa.inexistente.ou.inativa", null, LocaleContextHolder.getLocale()); 
+		//String mensagemDesenvolvedor = ex.toString(); // Nao tem o .getCause() , pois a Excecao eh postada direto
+		String mensagemDesenvolvedor = Optional.ofNullable(ex.getCause()).orElse(ex).toString();
+		List<MensagemErro> listaErros = Arrays.asList(new MensagemErro(mensagemUsuario, mensagemDesenvolvedor));
+		
+		return ResponseEntity.badRequest().body(listaErros);
 	}
 	
 	public static class MensagemErro {
