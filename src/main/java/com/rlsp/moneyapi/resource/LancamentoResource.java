@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rlsp.moneyapi.event.RecursoCriadoEvent;
 import com.rlsp.moneyapi.exceptionhandler.RlspMoneyExceptionHandler.MensagemErro;
+import com.rlsp.moneyapi.filter.LancamentoFilter;
 import com.rlsp.moneyapi.model.Lancamento;
 import com.rlsp.moneyapi.repository.LancamentoRepository;
 import com.rlsp.moneyapi.service.LancamentoService;
@@ -45,8 +46,18 @@ public class LancamentoResource {
 	private MessageSource messageSource; // Pega as MENSAGENS presentes no arquivo "messages.proporties"
 	
 	
-	@GetMapping
+	//@GetMapping
 	public List<Lancamento> listar(){
+		List<Lancamento> lancamentos = lancamentoRepository.findAll();
+		return lancamentos;
+	}
+	/**
+	 * Pesquisa atraves de QUERY PARAMETRO (ex: ?dataVencimentoDe='2020-01-01'?dataVencimentoDe='2020-07-01', etc)
+	 * @param lancamentoFilter
+	 * @return
+	 */
+	@GetMapping
+	public List<Lancamento> pesquisar(LancamentoFilter lancamentoFilter){
 		List<Lancamento> lancamentos = lancamentoRepository.findAll();
 		return lancamentos;
 	}
