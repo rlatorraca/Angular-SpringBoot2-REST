@@ -1,8 +1,6 @@
 package com.rlsp.moneyapi.resource;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -10,24 +8,24 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rlsp.moneyapi.event.RecursoCriadoEvent;
-import com.rlsp.moneyapi.exceptionhandler.RlspMoneyExceptionHandler.MensagemErro;
 import com.rlsp.moneyapi.filter.LancamentoFilter;
 import com.rlsp.moneyapi.model.Lancamento;
 import com.rlsp.moneyapi.repository.LancamentoRepository;
 import com.rlsp.moneyapi.service.LancamentoService;
-import com.rlsp.moneyapi.service.exception.PessoaInexistenteOuInativaException;
 
 @RestController
 @RequestMapping("/lancamentos")
@@ -57,8 +55,8 @@ public class LancamentoResource {
 	 * @return
 	 */
 	@GetMapping
-	public List<Lancamento> pesquisar(LancamentoFilter lancamentoFilter){
-		List<Lancamento> lancamentos = lancamentoRepository.findAll();
+	public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable){
+		Page<Lancamento> lancamentos = lancamentoRepository.filtrar(lancamentoFilter, pageable);
 		return lancamentos;
 	}
 	
@@ -89,5 +87,11 @@ public class LancamentoResource {
 		return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoSalvo);
 	}
 	
+	
+	@DeleteMapping("/{codigo}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	private void remover(@PathVariable Long codigo) {
+		lancamentoRepository.deleteById(codigo);
+	}
 	
 }
