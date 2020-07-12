@@ -1,2 +1,9 @@
 # Angular-SpringBoot2-REST
-Application developed using Angular 9, SpringBoot 2 (API REST) , JPA, MySQL, etc
+### REST API developed using the following tools: 
+- [x] Angular 9, 
+- [x] SpringBoot 2 (API REST) , 
+- [x] JPA, 
+- [x] MySQL, 
+- [x] OAuth2, 
+- [x] JWT (Json Web Tokens), 
+*etc
