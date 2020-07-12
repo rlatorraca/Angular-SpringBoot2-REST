@@ -5,5 +5,5 @@
 - [x] JPA, 
 - [x] MySQL, 
 - [x] OAuth2, 
-- [x] JWT (Json Web Token), 
+- [x] JWT (Json Web Tokens), 
 *etc
