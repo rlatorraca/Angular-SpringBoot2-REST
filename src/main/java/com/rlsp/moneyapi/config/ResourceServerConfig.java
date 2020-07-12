@@ -63,8 +63,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		
 		 
 		http.authorizeRequests()
-				.antMatchers(HttpMethod.GET,"/oauth/token").permitAll()
-				.antMatchers("/categorias/*").permitAll() // Em /categorias NAO PRECISA estar autenticado 
+				//.antMatchers(HttpMethod.GET,"/oauth/token").permitAll()
+				.antMatchers("/categorias").permitAll() // Em /categorias NAO PRECISA estar autenticado 
 			.and()
 			.authorizeRequests()
 				.anyRequest().authenticated() // Solicita AUTENTICACAO para qualquer acesso a pagina			

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,7 +56,12 @@ public class CategoriaResource {
 	 *   - ResponseEntity.noContent().build() ==> retorna 204 (sem conteudo)
 	 *   
 	 *   Ex: return categorias.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(categorias);
+	 *   
+	 *  @CrossOrigin ==> permite o acesso por ENDERECOS diferentes ao do servido (CORS)
+	 *  	- maxAge = tempo que fica em cache (em segundos)
+	 *   	- origins = sao os locais estao permitiodos acessar o BEAN
 	 */
+	@CrossOrigin (maxAge = 10, origins = {"http://localhost:8000"})
 	@GetMapping//==> mapeamento do GET
 	public List<Categoria> listar(){
 		List<Categoria> categorias = categoriaRepository.findAll();
