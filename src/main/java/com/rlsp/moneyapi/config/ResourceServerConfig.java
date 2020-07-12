@@ -1,19 +1,25 @@
 package com.rlsp.moneyapi.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration // Apenas pra saber que eh um Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter{
+@EnableResourceServer
+//public class ResourceServerConfig extends WebSecurityConfigurerAdapter{
+public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	
 	@Bean
 	public UserDetailsService userDetailsService() {
@@ -26,22 +32,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	/**
 	 * Configuracao de USUARIO ou SENHA (BASIC)
 	 */
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		super.configure(auth);
-		
+	@Autowired
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+				
 		// Autenticacao em MEMORIA (BASIC)
 		auth.inMemoryAuthentication()
 			.withUser("admin")
-			.password("{noop}admin") // SEM CRIPTOGRAFIA, Com CRIPTOGRAFIA usar "{bcrypt}"
+			.password("admin") // SEM CRIPTOGRAFIA, Com CRIPTOGRAFIA usar "{bcrypt}"
 			.roles("ROLE");		
+	}
+	/*8
+	 * Deixa o Servidor SEM ESTADO (Stateless)
+	 */
+	public void configure(ResourceServerSecurityConfigurer resources) throws Exception{
+		resources.stateless(true);
 	}
 	
 	/*
 	 * Serve para AUTORIZAR as REQUISICOES de acesso as paginas
 	 */
 	@Override
-	protected void configure(HttpSecurity http) throws Exception {		
+	public void configure(HttpSecurity http) throws Exception {		
 		//super.configure(http);
 		/**
 		 * A CSRF token is a unique, secret, unpredictable value created by the server-side application 
@@ -51,9 +62,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		 */
 		
 		 
-		http.httpBasic()
-			.and()
-			.authorizeRequests()
+		http.authorizeRequests()
+				.antMatchers(HttpMethod.GET,"/oauth/token").permitAll()
 				.antMatchers("/categorias/*").permitAll() // Em /categorias NAO PRECISA estar autenticado 
 			.and()
 			.authorizeRequests()
