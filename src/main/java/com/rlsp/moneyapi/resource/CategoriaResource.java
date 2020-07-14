@@ -1,6 +1,5 @@
 package com.rlsp.moneyapi.resource;
 
-import java.net.URI;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -11,14 +10,12 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.rlsp.moneyapi.event.RecursoCriadoEvent;
 import com.rlsp.moneyapi.model.Categoria;
@@ -64,7 +61,7 @@ public class CategoriaResource {
 	 */
 	//@CrossOrigin (maxAge = 10, origins = {"http://localhost:8000"})
 	@GetMapping//==> mapeamento do GET
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA') and #oauth2.hasScope('read')")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA')")
 	public List<Categoria> listar(){
 		List<Categoria> categorias = categoriaRepository.findAll();
 		return categorias;
@@ -105,7 +102,7 @@ public class CategoriaResource {
 	
 	// @ResponseStatus(value = HttpStatus.CREATED) == ResponseEntity.created(uri).body(categoriaSalva);
 	@PostMapping
-	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_CATEGORIA') and #oauth2.hasScope('write')")
+	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_CATEGORIA')")
 	public ResponseEntity<Categoria> salvar(@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
 		
 		Categoria categoriaSalva = categoriaRepository.save(categoria);
@@ -122,7 +119,7 @@ public class CategoriaResource {
 	}
 	
 	@GetMapping("/{codigo}")
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA') and #oauth2.hasScope('write')")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA')")
 	public ResponseEntity<Categoria> buscarCategoriaPeloCodigo(@PathVariable Long codigo) {
 		
 		// Utilizando MAP

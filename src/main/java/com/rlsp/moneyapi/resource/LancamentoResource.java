@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ import com.rlsp.moneyapi.event.RecursoCriadoEvent;
 import com.rlsp.moneyapi.filter.LancamentoFilter;
 import com.rlsp.moneyapi.model.Lancamento;
 import com.rlsp.moneyapi.repository.LancamentoRepository;
+import com.rlsp.moneyapi.repository.projection.ResumoLancamento;
 import com.rlsp.moneyapi.service.LancamentoService;
 
 @RestController
@@ -55,12 +57,21 @@ public class LancamentoResource {
 	 * @return
 	 */
 	@GetMapping
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')")
 	public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable){
 		Page<Lancamento> lancamentos = lancamentoRepository.filtrar(lancamentoFilter, pageable);
 		return lancamentos;
 	}
 	
+	//@GetMapping(params = "resumo") // se encontrar um parametro = resumo na requisicao do GET, chamara esse metodo	
+	@GetMapping(params = "resumo")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')")
+	public Page<ResumoLancamento> resumir(LancamentoFilter lancamentoFilter, Pageable pageable) {
+		return lancamentoRepository.resumir(lancamentoFilter, pageable);
+	}
+	
 	@GetMapping("/{codigo}")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')")
 	private ResponseEntity<Lancamento> buscarLancamentoPeloCodigo(@PathVariable Long codigo){
 		
 		// Utilizando MAP
@@ -75,6 +86,7 @@ public class LancamentoResource {
 	}
 	
 	@PostMapping
+	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO')")
 	private ResponseEntity<Lancamento> salvarLancamento(@Valid @RequestBody Lancamento lancamento, HttpServletResponse response){
 		//Lancamento lancamentoSalvo = lancamentoRepository.save(lancamento);
 		Lancamento lancamentoSalvo = lancamentoService.salvar(lancamento);
@@ -90,6 +102,7 @@ public class LancamentoResource {
 	
 	@DeleteMapping("/{codigo}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@PreAuthorize("hasAuthority('ROLE_REMOVER_LANCAMENTO')")
 	private void remover(@PathVariable Long codigo) {
 		lancamentoRepository.deleteById(codigo);
 	}
