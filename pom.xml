@@ -55,6 +55,13 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>compile</scope>
 		</dependency>
+		
+		<!-- Configuracao para SETAR Ambiente de Exeucao (Local / Producao) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>			
+			<optional>true</optional>
+		</dependency>
 
 		<!-- MIgracão do FlyWay - DB -->
 		<dependency>
@@ -105,6 +112,11 @@
 					<artifactId>junit-vintage-engine</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 

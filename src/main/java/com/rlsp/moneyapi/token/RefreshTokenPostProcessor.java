@@ -4,6 +4,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -15,6 +16,8 @@ import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
+import com.rlsp.moneyapi.config.property.RlspMoneyApiProperty;
 
 /**
  * Fara a interceptacao do REFRESH_TOKEN e coloca dentro de um COOKIE protegido para que nao seja acessado pelo JavaScript
@@ -28,6 +31,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @ControllerAdvice
 public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2AccessToken>{
 
+	@Autowired	
+	private RlspMoneyApiProperty rlspMoneyApiProperty;
+	
 	@Override
 	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
 		
@@ -67,7 +73,8 @@ public class RefreshTokenPostProcessor implements ResponseBodyAdvice<OAuth2Acces
 		
 		Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);  // Cria um COOKIE
 		refreshTokenCookie.setHttpOnly(true); // Cookie apenas acessivel em HTTP)
-		refreshTokenCookie.setSecure(false);  // Cookie deve ser apenas seguro (HTTPS)
+		//refreshTokenCookie.setSecure(false);  // Cookie deve ser apenas seguro (HTTPS)
+		refreshTokenCookie.setSecure(rlspMoneyApiProperty.getSeguranca().isEnableHttps());
 		refreshTokenCookie.setPath(requisicao.getContextPath() + "/oauth/token"); // Para qual caminho sera usado o COOKIE
 		//refreshTokenCookie.setMaxAge(60*60*24*30);   // Tempo para EXPIRAR o COOKIE (no caso 30 dias)
 		refreshTokenCookie.setMaxAge(259200);   // Tempo para EXPIRAR o COOKIE (no caso 30 dias)
