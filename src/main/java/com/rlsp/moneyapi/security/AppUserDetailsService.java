@@ -35,7 +35,7 @@ public class AppUserDetailsService implements UserDetailsService{
 		Optional<Usuario> usuarioOptional = usuarioRespository.findByEmail(email);
 		Usuario usuario = usuarioOptional.orElseThrow(() -> new UsernameNotFoundException("Usuario e/ senha nao encontrado"));
 		//System.out.println("-----------------" + email + ", " + usuario.getSenha() + ", " + getAuthorities(usuario));
-		return new User(email, usuario.getSenha(), getAuthorities(usuario));
+		return new UsuarioSistema(usuario, getAuthorities(usuario));
 	}
 
 	private Collection<? extends GrantedAuthority> getAuthorities(Usuario usuario) {
