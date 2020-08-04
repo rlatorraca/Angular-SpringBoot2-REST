@@ -6,7 +6,6 @@ import com.rlsp.moneyapi.model.Lancamento;
 import com.rlsp.moneyapi.repository.lancamento.LancamentoRepositoryQuery;
 
 public interface LancamentoRepository extends JpaRepository<Lancamento, Long>, LancamentoRepositoryQuery{
-
 	
 
 }

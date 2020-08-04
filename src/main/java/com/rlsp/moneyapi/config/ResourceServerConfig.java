@@ -10,6 +10,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.expression.OAuth2MethodSecurityExpressionHandler;
 
+
 @Profile("oauth-security")
 @Configuration // Apenas pra saber que eh um Configuration
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
@@ -51,7 +52,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 		http.authorizeRequests()
 				// .antMatchers(HttpMethod.GET,"/oauth/token").permitAll()
-				.antMatchers("/categorias").permitAll() // Em /categorias NAO PRECISA estar autenticado
+				.antMatchers("/categorias").permitAll() // Em /categorias NAO PRECISA estar autenticado				
 				// .and()
 				// .authorizeRequests()
 				.anyRequest().authenticated() // Solicita AUTENTICACAO para qualquer acesso a pagina

@@ -10,16 +10,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("rlspmoney")
 public class RlspMoneyApiProperty {
 	
-	private String origemPermitida = "http://localhost:8000";
+	private String originPermitida = "http://localhost:4200";
 
 	private final Seguranca seguranca = new Seguranca();
 	
-	public void setOrigemPermitida(String origemPermitida) {
-		this.origemPermitida = origemPermitida;
+	
+	public String getOriginPermitida() {
+		return originPermitida;
 	}
 
-	public String getOrigemPermitida() {
-		return origemPermitida;
+	public void setOriginPermitida(String originPermitida) {
+		this.originPermitida = originPermitida;
 	}
 
 	public Seguranca getSeguranca() {

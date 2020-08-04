@@ -8,6 +8,7 @@ public class GeradorSenha {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 		System.out.println("m0b1l30 : " + encoder.encode("m0b1l30"));
 		System.out.println("@ngul@r : " + encoder.encode("@ngul@r"));
+		System.out.println("@ngul@r0 : " + encoder.encode("@ngul@r0"));
 		System.out.println("admin : " + encoder.encode("admin"));
 		System.out.println("rodrigo : " + encoder.encode("rodrigo"));
 	}

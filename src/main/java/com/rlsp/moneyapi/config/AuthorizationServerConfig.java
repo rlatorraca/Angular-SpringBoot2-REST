@@ -37,11 +37,11 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		//Pode ser em MEMORIA ou DB
 		clients.inMemory()
 				.withClient("angular") // User
-				.secret("$2y$12$ShRWmaWryurPTd/LaDDxCeTV61iS6ouhAPBzluhiReu6So5J0Mvr6")    // Password: @angul@r0			
+				.secret("$2a$12$yum3QI/F4uNU1xx8IoFINe8zwRNs0pX62Tw8i2XyN0uvrPGtfWUIe")    // Password: @ngul@r0			
 				.scopes("read", "write")
 				.authorizedGrantTypes("password", "refresh_token")   // Usa PASSWORD FLOW (1º Autentica, 2º Recebe o TOKEN)
-				.accessTokenValiditySeconds(1800)  // Quantidade de tempo que fluxo fica ativo (no caso 30 minutos = 1800 segundos)
-				.refreshTokenValiditySeconds(60 * 60 * 24) // 60(sef) * 60(min) * 24  = 1 dia para expirar		
+				.accessTokenValiditySeconds(60 * 60 * 24 * 30)  // Quantidade de tempo que fluxo fica ativo (no caso 30 minutos = 1800 segundos)
+				.refreshTokenValiditySeconds(60 * 60 * 24 * 30) // 60(sef) * 60(min) * 24  = 1 dia para expirar		
 			.and()
 				.withClient("mobile")
 				.secret("$2y$12$2EKG47Xwvq7vwmRxP5zdf.BLjIPI47h2h7v4iWAozYVbC3POFvjcq") // m0b1l3

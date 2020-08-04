@@ -53,7 +53,7 @@ public class LancamentoService {
 		Pessoa pessoa = null;
 		
 		if(lancamento.getPessoa().getCodigo() != null) {
-			pessoa = pessoaRepository.findById(lancamento.getPessoa().getCodigo()).orElse(null);			
+			pessoa = pessoaRepository.getOne(lancamento.getPessoa().getCodigo());		
 		}
 		
 		if (pessoa == null  || pessoa.isInativo()) {
@@ -64,12 +64,19 @@ public class LancamentoService {
 
 	private Lancamento buscarLancamentoExistente(Long codigo) {
 		
-		Lancamento lancamentoSalvo = lancamentoRepository.findById(codigo).orElse(null);
+		//Lancamento lancamentoSalvo = lancamentoRepository.findById(codigo).orElse(null);
+		Optional<Lancamento> lancamentoSalvo = lancamentoRepository.findById(codigo);
 		
+		/*
 		if (lancamentoSalvo == null ) {
 			throw new IllegalArgumentException();
+		} */
+		
+		if (!lancamentoSalvo.isPresent() ) {
+			throw new IllegalArgumentException();
 		}
-		return lancamentoSalvo;
+		
+		return lancamentoSalvo.get();
 	}
 
 }

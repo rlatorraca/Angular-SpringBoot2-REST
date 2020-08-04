@@ -44,13 +44,13 @@ public class PessoaResource {
 	@Autowired
 	private ApplicationEventPublisher publisher;
 	
-	/*
-	@GetMapping//==> mapeamento do GET
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
-	public List<Pessoa> listar(){
-		List<Pessoa> categorias = pessoaRepository.findAll();
-		return categorias;
-	} */
+	
+//	@GetMapping//==> mapeamento do GET
+//	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
+//	public List<Pessoa> listar(){
+//		List<Pessoa> categorias = pessoaRepository.findAll();
+//		return categorias;
+//	}
 	
 	@PostMapping
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA')")
@@ -128,16 +128,30 @@ public class PessoaResource {
 	@PutMapping("/{codigo}/ativo")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA')")
-	private void atualizarPropriedadeAtivo(@PathVariable Long codigo, @RequestBody Boolean ativo) {
+	public void atualizarPropriedadeAtivo(@PathVariable Long codigo, @RequestBody Boolean ativo) {
 		pessoaService.atualizarPropriedadeAtivo(codigo, ativo);
 		
 	}
 	
 	@GetMapping
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
-	public Page<Pessoa> pesquisar(@RequestParam(required = false, defaultValue = "%") String nome, Pageable pageable) {
-		return pessoaRepository.findByNomeContaining(nome, pageable);
+	public Page<Pessoa> pesquisar(@RequestParam(required = false) String nome, Pageable pageable) {
+		
+		
+		if (nome == null) {
+		  System.out.println("Dentro de GET Pessoas");
+		  return pessoaRepository.findAll(pageable);
+		} else {
+		  return pessoaRepository.findByNomeContainingIgnoreCase(nome, pageable);
+		}
+		
 	}
+	
+//	@GetMapping
+//	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
+//	public Page<Pessoa> pesquisar(@RequestParam(required = false, defaultValue = "%") String nome, Pageable pageable) {
+//		return pessoaRepository.findByNomeContainingIgnoreCase(nome, pageable);
+//	}
 	
 	
 }

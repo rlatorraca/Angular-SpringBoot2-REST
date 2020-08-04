@@ -1,6 +1,7 @@
 package com.rlsp.moneyapi.resource;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -48,6 +49,7 @@ public class LancamentoResource {
 	
 	
 	//@GetMapping
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')")
 	public List<Lancamento> listar(){
 		List<Lancamento> lancamentos = lancamentoRepository.findAll();
 		return lancamentos;
@@ -72,23 +74,31 @@ public class LancamentoResource {
 	}
 	
 	@GetMapping("/{codigo}")
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')")
-	private ResponseEntity<Lancamento> buscarLancamentoPeloCodigo(@PathVariable Long codigo){
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
+	public ResponseEntity<Lancamento> buscarLancamentoPeloCodigo(@PathVariable Long codigo){
 		
 		// Utilizando MAP
-		return lancamentoRepository.findById(codigo)
+		/*return lancamentoRepository.findById(codigo)
 				.map(lancamento -> ResponseEntity.ok(lancamento))
-				.orElse(ResponseEntity.notFound().build());
+				.orElse(ResponseEntity.notFound().build()); */
 		
 		//Utilizando isPresent()
-				/* Optional<Lancamento> lancamento = this.pessoaRepository.findById(codigo);
-				    return lancamentoRepository.isPresent() ? ResponseEntity.ok(lancamento.get()) : ResponseEntity.notFound().build();
-				*/	
+				 Optional<Lancamento> lancamento = lancamentoRepository.findById(codigo);
+				    return lancamento.isPresent() ? ResponseEntity.ok(lancamento.get()) : ResponseEntity.notFound().build();
+					
+	}
+	
+
+	//@GetMapping("/{codigo}")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
+	public ResponseEntity<Lancamento> buscarPeloCodigo(@PathVariable Long codigo) {
+		Optional<Lancamento> lancamento = lancamentoRepository.findById(codigo);
+		return lancamento.isPresent() ? ResponseEntity.ok(lancamento.get()) : ResponseEntity.notFound().build();
 	}
 	
 	@PostMapping
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO')")
-	private ResponseEntity<Lancamento> salvarLancamento(@Valid @RequestBody Lancamento lancamento, HttpServletResponse response){
+	public ResponseEntity<Lancamento> salvarLancamento(@Valid @RequestBody Lancamento lancamento, HttpServletResponse response){
 		//Lancamento lancamentoSalvo = lancamentoRepository.save(lancamento);
 		Lancamento lancamentoSalvo = lancamentoService.salvar(lancamento);
 	
@@ -101,10 +111,11 @@ public class LancamentoResource {
 	}
 	
 	
+	
 	@DeleteMapping("/{codigo}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@PreAuthorize("hasAuthority('ROLE_REMOVER_LANCAMENTO')")
-	private void remover(@PathVariable Long codigo) {
+	@PreAuthorize("hasAuthority('ROLE_REMOVER_LANCAMENTO') and #oauth2.hasScope('write')")
+	public void remover(@PathVariable Long codigo) {
 		lancamentoRepository.deleteById(codigo);
 	}
 	

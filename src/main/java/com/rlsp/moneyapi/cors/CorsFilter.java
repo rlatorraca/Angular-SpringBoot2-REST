@@ -40,10 +40,10 @@ public class CorsFilter implements Filter{
 		HttpServletResponse resposta = (HttpServletResponse) response;
 		
 		//Essa parte deve sempre ser enviada
-		resposta.setHeader("Access-Control-Allow-Origin", rlspMoneyApiProperty.getOrigemPermitida()); // Origem (hosts) que sao permitidas acessar
+		resposta.setHeader("Access-Control-Allow-Origin", rlspMoneyApiProperty.getOriginPermitida()); // Origem (hosts) que sao permitidas acessar
 		resposta.setHeader("Access-Control-Allow-Credentials", "true"); //Para que o COOKIE do token/ refresh_token seja enviado
 		
-		if ("OPTIONS".equals(requisicao.getMethod()) && rlspMoneyApiProperty.getOrigemPermitida().equals(requisicao.getHeader("Origin"))) { // Em casode Existir "OPTIONS" na requisicao
+		if ("OPTIONS".equals(requisicao.getMethod()) && rlspMoneyApiProperty.getOriginPermitida().equals(requisicao.getHeader("Origin"))) { // Em casode Existir "OPTIONS" na requisicao
 			resposta.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS"); // Verbos permitidos na requisicao
 			resposta.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept"); // Hearders permitidos na requisicao
 			resposta.setHeader("Access-Control-Max-Age", "3600"); // Tempo de buffer do CorsFilter em segundos

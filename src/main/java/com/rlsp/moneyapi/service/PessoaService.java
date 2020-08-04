@@ -1,10 +1,13 @@
 package com.rlsp.moneyapi.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.rlsp.moneyapi.model.Lancamento;
 import com.rlsp.moneyapi.model.Pessoa;
 import com.rlsp.moneyapi.repository.PessoaRepository;
 
@@ -32,9 +35,28 @@ public class PessoaService {
 		
 	}
 	
+	/*
 	private Pessoa buscarPessoaSalvaPeloCodigo(Long codigo) {
 		Pessoa pessoaSalva = this.pessoaRepository.findById(codigo)
 				.orElseThrow(() -> new EmptyResultDataAccessException(1));
 		return pessoaSalva;
+	} */
+	
+	
+	private Pessoa buscarPessoaSalvaPeloCodigo(Long codigo) {
+		Optional<Pessoa> pessoaSalva = pessoaRepository.findById(codigo);
+		
+		/*
+		if (lancamentoSalvo == null ) {
+			throw new IllegalArgumentException();
+		} */
+		
+		if (!pessoaSalva.isPresent() ) {
+			throw new IllegalArgumentException();
+		}
+		
+		return pessoaSalva.get();
 	}
+	
+	
 }
