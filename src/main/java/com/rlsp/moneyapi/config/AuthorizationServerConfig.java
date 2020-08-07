@@ -40,7 +40,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 				.secret("$2a$12$yum3QI/F4uNU1xx8IoFINe8zwRNs0pX62Tw8i2XyN0uvrPGtfWUIe")    // Password: @ngul@r0			
 				.scopes("read", "write")
 				.authorizedGrantTypes("password", "refresh_token")   // Usa PASSWORD FLOW (1º Autentica, 2º Recebe o TOKEN)
-				.accessTokenValiditySeconds(60 * 60 * 24 * 30)  // Quantidade de tempo que fluxo fica ativo (no caso 30 minutos = 1800 segundos)
+				.accessTokenValiditySeconds(60 * 60 * 2)  // Quantidade de tempo que fluxo fica ativo (no caso 30 minutos = 1800 segundos)
 				.refreshTokenValiditySeconds(60 * 60 * 24 * 30) // 60(sef) * 60(min) * 24  = 1 dia para expirar		
 			.and()
 				.withClient("mobile")
