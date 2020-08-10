@@ -10,7 +10,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("rlspmoney")
 public class RlspMoneyApiProperty {
 	
-	private String originPermitida = "https://rlspmoney-angular10.herokuapp.com";
+	//private String originPermitida = "https://rlspmoney-angular10.herokuapp.com";
+	private String originPermitida = "http://localhost:4200";
 
 	private final Seguranca seguranca = new Seguranca();
 	

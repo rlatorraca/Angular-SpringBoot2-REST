@@ -1,5 +1,6 @@
 package com.rlsp.moneyapi.resource;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rlsp.moneyapi.dto.LancamentosEstatisticaCategoria;
+import com.rlsp.moneyapi.dto.LancamentosEstatisticaPorDia;
 import com.rlsp.moneyapi.event.RecursoCriadoEvent;
 import com.rlsp.moneyapi.filter.LancamentoFilter;
 import com.rlsp.moneyapi.model.Lancamento;
@@ -47,9 +50,21 @@ public class LancamentoResource {
 	@Autowired
 	private MessageSource messageSource; // Pega as MENSAGENS presentes no arquivo "messages.proporties"
 	
+	@GetMapping("/estatisticas/por-categoria")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')  and #oauth2.hasScope('read')")
+	public List<LancamentosEstatisticaCategoria> porCategoria(){
+		return this.lancamentoRepository.porCategoria(LocalDate.now());
+	}
+	
+
+	@GetMapping("/estatisticas/por-dia")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')  and #oauth2.hasScope('read')")
+	public List<LancamentosEstatisticaPorDia> porDia(){
+		return this.lancamentoRepository.porDia(LocalDate.now());
+	}
 	
 	//@GetMapping
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')  and #oauth2.hasScope('read')")
 	public List<Lancamento> listar(){
 		List<Lancamento> lancamentos = lancamentoRepository.findAll();
 		return lancamentos;
@@ -60,7 +75,7 @@ public class LancamentoResource {
 	 * @return
 	 */
 	@GetMapping
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')  and #oauth2.hasScope('read')")
 	public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable){
 		Page<Lancamento> lancamentos = lancamentoRepository.filtrar(lancamentoFilter, pageable);
 		return lancamentos;
