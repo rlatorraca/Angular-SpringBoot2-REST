@@ -56,7 +56,7 @@ public class PessoaResource {
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA')")
 	public ResponseEntity<Pessoa> salvar(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response){
 		
-		Pessoa pessoaSalva = pessoaRepository.save(pessoa);
+		Pessoa pessoaSalva = pessoaService.salvar(pessoa);
 		
 		// Construindo a LOCATION, chamando o "RecursoCriadoEvent"
 		// this ==> sera a funcao/metodo que chamou o EVENTO

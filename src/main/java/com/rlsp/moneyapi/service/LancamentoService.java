@@ -9,16 +9,20 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import org.slf4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.rlsp.moneyapi.dto.LancamentosEstatisticaPessoa;
+import com.rlsp.moneyapi.mail.Mailer;
 import com.rlsp.moneyapi.model.Lancamento;
 import com.rlsp.moneyapi.model.Pessoa;
+import com.rlsp.moneyapi.model.Usuario;
 import com.rlsp.moneyapi.repository.LancamentoRepository;
 import com.rlsp.moneyapi.repository.PessoaRepository;
+import com.rlsp.moneyapi.repository.UsuarioRepository;
 import com.rlsp.moneyapi.service.exception.PessoaInexistenteOuInativaException;
 
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -30,17 +34,49 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 @Service
 public class LancamentoService {
 	
+	private static final String DESTINATARIOS = "ROLE_PESQUISAR_LANCAMENTO";
+	
+	private static final Logger logger = org.slf4j.LoggerFactory.getLogger(LancamentoService.class); // Log para agendamento do email
+	
 	@Autowired
 	private PessoaRepository pessoaRepository;
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
 	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private Mailer mailer;
+	
 	/**
 	 * No caso abaixo sera executado todos os dias as 6 horas da manha
 	 */
-	@Scheduled(cron = "0 0 6 * * * ") // (cron = " segundos minutos hora dia_do_mes mes dia_da_semana)
+	@Scheduled(fixedDelay = 1000 * 60 * 30) // 30 minutos
+	//@Scheduled(cron = "0 0 6 * * * ") // (cron = " segundos minutos hora dia_do_mes mes dia_da_semana)
 	public void avisarSobreLancamentosVencidos() {
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("Prepararando envio de e-mails para lançamentos recebidos ...");
+		}
+		
+		List<Lancamento> vencidos = lancamentoRepository.findByDataVencimentoLessThanEqualAndDataPagamentoNull(LocalDate.now());
+		
+		if(vencidos.isEmpty()) {
+			logger.debug("Sem itens vencidos para remeter para o e-mail !");
+		} else {
+			logger.debug("Quantidade de emails: " + vencidos.size());
+		}
+		List<Usuario> destinatarios = usuarioRepository.findByPermissoesDescricao(DESTINATARIOS);
+		
+		if(destinatarios.isEmpty()) {
+			logger.debug("O sistema não encontrou destinatários para o envio !");
+		}
+		
+		mailer.avisarSobreLancamentosVencidos(vencidos, destinatarios);
+		
+		logger.info("Email enviado com SUCESSO !!!");
 		
 	}
 	
