@@ -9,13 +9,13 @@ public class LancamentosEstatisticaPessoa {
 	
 	private TipoLancamento tipo;
 	private Pessoa pessoa;
-	private BigDecimal valor;
+	private BigDecimal total;
 	
-	public LancamentosEstatisticaPessoa(TipoLancamento tipo, Pessoa pessoa, BigDecimal valor) {
+	public LancamentosEstatisticaPessoa(TipoLancamento tipo, Pessoa pessoa, BigDecimal total) {
 	
 		this.tipo = tipo;
 		this.pessoa = pessoa;
-		this.valor = valor;
+		this.total = total;
 	}
 
 	public TipoLancamento getTipo() {
@@ -34,12 +34,12 @@ public class LancamentosEstatisticaPessoa {
 		this.pessoa = pessoa;
 	}
 
-	public BigDecimal getValor() {
-		return valor;
+	public BigDecimal getTotal() {
+		return total;
 	}
 
-	public void setValor(BigDecimal valor) {
-		this.valor = valor;
+	public void setTotal(BigDecimal total) {
+		this.total = total;
 	}
 	
 	
