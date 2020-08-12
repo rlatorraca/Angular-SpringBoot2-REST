@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -13,13 +14,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rlsp.moneyapi.listener.LancamentoAnexoListener;
 
 
+@EntityListeners(LancamentoAnexoListener.class) // Toda vez que um lancamento for criado esse Listener sera disparado e executara a gravaca da URL do Anexo se existir
 @Entity
 @Table(name="lancamento")
 public class Lancamento {
@@ -44,6 +48,10 @@ public class Lancamento {
 	private BigDecimal valor;
 	
 	private String observacao;
+	
+	private String anexo;	
+	@Transient
+	private String urlAnexo;
 	
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -135,6 +143,24 @@ public class Lancamento {
 
 	public void setPessoa(Pessoa pessoa) {
 		this.pessoa = pessoa;
+	}
+	
+	
+
+	public String getAnexo() {
+		return anexo;
+	}
+
+	public void setAnexo(String anexo) {
+		this.anexo = anexo;
+	}
+
+	public String getUrlAnexo() {
+		return urlAnexo;
+	}
+
+	public void setUrlAnexo(String urlAnexo) {
+		this.urlAnexo = urlAnexo;
 	}
 
 	@Override

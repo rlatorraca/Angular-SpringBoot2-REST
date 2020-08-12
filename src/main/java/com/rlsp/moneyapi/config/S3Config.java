@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.BucketLifecycleConfiguration;
@@ -24,15 +25,22 @@ public class S3Config {
 	
 	@Autowired
 	private RlspMoneyApiProperty property;	
+	
+	@Autowired
+	private Environment env;
 	  
-	 public AmazonS3 amazonS3() {
+	@Bean
+	public AmazonS3 amazonS3() {
 		  
-		 AWSCredentials credenciais = new BasicAWSCredentials(
-					property.getS3().getAccessKeyId(), property.getS3().getSecretAccessKey());
+	BasicAWSCredentials credenciais = new  BasicAWSCredentials(env.getProperty("AWS_ACCESS_KEY"),
+				  env.getProperty("AWS_SECRET_ACCESS_KEY"));
+//		BasicAWSCredentials credenciais = new BasicAWSCredentials(
+//					property.getS3().getAccessKeyId(), property.getS3().getSecretAccessKey());
 		  //BasicAWSCredentials credenciais = new  BasicAWSCredentials(property.getS3().getAccessKeyId(), property.getS3().getSecretAccessKey());
 		  
 			AmazonS3 amazonS3 = AmazonS3ClientBuilder.standard()
 					.withCredentials(new AWSStaticCredentialsProvider(credenciais))
+					.withRegion(Regions.US_EAST_1)
 					.build();
 			
 			if (!amazonS3.doesBucketExistV2(property.getS3().getBucket())) { // Se nao exisitr sera criado um bucket no S3

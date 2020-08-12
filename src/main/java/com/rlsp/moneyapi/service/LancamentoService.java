@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.rlsp.moneyapi.dto.LancamentosEstatisticaPessoa;
 import com.rlsp.moneyapi.mail.Mailer;
@@ -24,6 +25,7 @@ import com.rlsp.moneyapi.repository.LancamentoRepository;
 import com.rlsp.moneyapi.repository.PessoaRepository;
 import com.rlsp.moneyapi.repository.UsuarioRepository;
 import com.rlsp.moneyapi.service.exception.PessoaInexistenteOuInativaException;
+import com.rlsp.moneyapi.storage.S3;
 
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -49,6 +51,9 @@ public class LancamentoService {
 	
 	@Autowired
 	private Mailer mailer;
+	
+	@Autowired
+	private S3 s3;
 	
 	/**
 	 * No caso abaixo sera executado todos os dias as 6 horas da manha
@@ -106,6 +111,10 @@ public class LancamentoService {
 		if(!pessoaSalva.isPresent() || !pessoaSalva.get().getAtivo()) {
 			throw new PessoaInexistenteOuInativaException();
 		}
+		
+		if(StringUtils.hasText(lancamento.getAnexo())) {
+			s3.salvar(lancamento.getAnexo());
+		}
 		return lancamentoRepository.save(lancamento);
 		
 		
@@ -118,6 +127,16 @@ public class LancamentoService {
 		if(!lancamento.getPessoa().equals(lancamentoSalvo.getPessoa())) {
 			validarPessoa(lancamento);
 		}
+		
+		// se  NAO existe ANEXO dentro do Novo Lancamento E se a o Lancamento  Antigo tinha ANEXO, para ENTAO REMOVER
+		if (StringUtils.isEmpty(lancamento.getAnexo()) && StringUtils.hasText(lancamentoSalvo.getAnexo())) {
+			s3.remover(lancamentoSalvo.getAnexo());
+		
+		// Se o Lancamento NOVO JA POSSUI um Arquivo E Este eh diferente do Anexo ANTIGO do Lancamento
+		} else if (StringUtils.hasText(lancamento.getAnexo()) && !lancamento.getAnexo().equals(lancamentoSalvo.getAnexo())) {
+			s3.substituir(lancamentoSalvo.getAnexo(), lancamento.getAnexo());
+		}
+
 		
 		BeanUtils.copyProperties(lancamento, lancamentoSalvo, "codigo"); // Faz a copia do lancamento ==> lancamentoSalvo, EXCETO "codigo"
 

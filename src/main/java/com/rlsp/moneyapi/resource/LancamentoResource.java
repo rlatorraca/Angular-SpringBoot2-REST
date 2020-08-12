@@ -1,8 +1,6 @@
 package com.rlsp.moneyapi.resource;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +18,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.rlsp.moneyapi.dto.Anexo;
 import com.rlsp.moneyapi.dto.LancamentosEstatisticaCategoria;
 import com.rlsp.moneyapi.dto.LancamentosEstatisticaPorDia;
 import com.rlsp.moneyapi.event.RecursoCriadoEvent;
@@ -42,6 +40,7 @@ import com.rlsp.moneyapi.model.Lancamento;
 import com.rlsp.moneyapi.repository.LancamentoRepository;
 import com.rlsp.moneyapi.repository.projection.ResumoLancamento;
 import com.rlsp.moneyapi.service.LancamentoService;
+import com.rlsp.moneyapi.storage.S3;
 
 @RestController
 @RequestMapping("/lancamentos")
@@ -57,16 +56,16 @@ public class LancamentoResource {
 	private ApplicationEventPublisher publisher;
 	
 	@Autowired
+	private S3 s3;
+	
+	@Autowired
 	private MessageSource messageSource; // Pega as MENSAGENS presentes no arquivo "messages.proporties"
 	
 	@PostMapping("/anexo")
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO') and #oauth2.hasScope('write')")
-	public String uploadAnexo(@RequestParam MultipartFile anexo) throws IOException {
-		OutputStream out = new FileOutputStream(
-				"/home/alexandre/Desktop/anexo--" + anexo.getOriginalFilename());
-		out.write(anexo.getBytes());
-		out.close();
-		return "ok";
+	public Anexo uploadAnexo(@RequestParam MultipartFile anexo) throws IOException {
+		String nome = s3.salvarTemporariamente(anexo);
+		return new Anexo(nome, s3.configurarUrl(nome));
 	}
 	
 	@GetMapping("/relatorios/por-pessoa")
